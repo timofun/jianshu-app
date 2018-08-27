@@ -1,40 +1,14 @@
-import React, { Component, Fragment } from 'react';
-import axiox from 'axios';
-import './App.css'
+import React, { Component } from 'react';
+import Header from './common/header/index.js'
 // import { CSSTransition } from 'react-transition-group'
 
 class App extends Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      show: true
-    }
-    this.handleToggle = this.handleToggle.bind(this)
-  }
-
-  handleToggle () {
-    this.setState({
-      show: !this.state.show
-    })
-  }
-  
   render() {
     return (
-      <Fragment>
-        <div className={this.state.show ? 'show' : 'hide'}>
-          hello
-        </div>
-        <button onClick={this.handleToggle}>
-          toggle
-        </button>
-      </Fragment>
+      <div className='timo'>
+        <Header></Header>
+      </div>
     );
-  }
-  componentDidMount () {
-    axiox.get('/api/todolist').then(res => {
-      console.log(res)
-    })
   }
 }
 
