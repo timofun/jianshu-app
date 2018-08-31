@@ -124,6 +124,9 @@ export const SearchInfoTitle = styled.div`
 export const SearchInfoSwitch = styled.span`
   float: right;
   font-size: 13px;
+  &:hover {
+    cursor: pointer
+  }
 `;
 
 export const SearchInfoItem = styled.a`
@@ -137,6 +140,9 @@ export const SearchInfoItem = styled.a`
   border: 1px solid #ddd;
   border-radius: 3px;
   color: #787878;
+  &:hover {
+    cursor: pointer
+  }
 `;
 
 export const Addition = styled.div`

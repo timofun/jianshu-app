@@ -20,22 +20,31 @@ import { actionCreators } from './store'
 
 
 class Header extends React.Component {
-  getListArea (show) {
-    if (show) {
+  getListArea () {
+    const { focused, mouseIn, list, page, totalPage, handleMouseEnter, handleMouseLeave, handleChangePage } = this.props
+    const newList = list.toJS()
+    const pageList = []
+    if (newList.length) {
+      for (let i = (page - 1) * 10; i < page * 10; i++) {
+        if (newList[i]) {
+          pageList.push(
+            <SearchInfoItem key={newList[i]}>{newList[i]}</SearchInfoItem>
+          )
+        }
+      }
+    }
+    if (focused || mouseIn) {
       return (
-        <SearchInfo>
+        <SearchInfo
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
           <SearchInfoTitle>
             热门搜索
-            <SearchInfoSwitch>换一批</SearchInfoSwitch>
+            <SearchInfoSwitch onClick={() => handleChangePage(page, totalPage)}>换一批</SearchInfoSwitch>
           </SearchInfoTitle>
           <div>
-            <SearchInfoItem>教育</SearchInfoItem>
-            <SearchInfoItem>教育</SearchInfoItem>
-            <SearchInfoItem>教育</SearchInfoItem>
-            <SearchInfoItem>教育</SearchInfoItem>
-            <SearchInfoItem>教育</SearchInfoItem>
-            <SearchInfoItem>教育</SearchInfoItem>
-            <SearchInfoItem>教育</SearchInfoItem>
+            {pageList}
           </div>
         </SearchInfo>
       )
@@ -45,6 +54,7 @@ class Header extends React.Component {
   }
 
   render () {
+    const { focused, handleInputFocus, handleInputBlur } = this.props
     return (
       <HeaderWrapper>
         <Logo></Logo>
@@ -58,18 +68,18 @@ class Header extends React.Component {
           </NavItem>
           <SearchWrapper>
             <CSSTransition
-              in={this.props.focused}
+              in={focused}
               timeout={400}
               classNames='slide'
             >
               <NavSearch
-                className={this.props.focused ? 'focused' : ''}
-                onFocus={this.props.handleInputFocus}
-                onBlur={this.props.handleInputBlur}
+                className={focused ? 'focused' : ''}
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
               ></NavSearch>
             </CSSTransition>
-            <i className={this.props.focused ? 'focused iconfont' : 'iconfont'}>&#xe605;</i>
-            {this.getListArea(this.props.focused)}
+            <i className={focused ? 'focused iconfont' : 'iconfont'}>&#xe605;</i>
+            {this.getListArea()}
           </SearchWrapper>
         </Nav>
         <Addition>
@@ -86,17 +96,36 @@ class Header extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    focused: state.getIn(['header', 'focused'])
+    focused: state.getIn(['header', 'focused']),
+    mouseIn: state.getIn(['header', 'mouseIn']),
+    list: state.getIn(['header', 'list']),
+    page: state.getIn(['header', 'page']),
+    totalPage: state.getIn(['header', 'totalPage'])
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    handleInputFocus() {
+    handleInputFocus () {
+      dispatch(actionCreators.getList())
       dispatch(actionCreators.searchFocus())
     },
-    handleInputBlur() {
+    handleInputBlur () {
       dispatch(actionCreators.searchBlur())
+    },
+    handleMouseEnter () {
+      dispatch(actionCreators.handleMouseEnter())
+    },
+    handleMouseLeave () {
+      dispatch(actionCreators.handleMouseLeave())
+    },
+    handleChangePage (page, totalPage) {
+      console.log(page)
+      if (page < totalPage) {
+        dispatch(actionCreators.handleChangePage(page + 1))
+      } else {
+        dispatch(actionCreators.handleChangePage(1))
+      }
     }
   }
 }
